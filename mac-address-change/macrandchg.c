@@ -60,7 +60,7 @@ int netdev_up(struct netdev *dev) {
         return -1;
     }
     // Getting down the network interface
-    dev->ifdev.ifr_flags &= IFF_UP;
+    dev->ifdev.ifr_flags |= IFF_UP;
     if (ioctl(dev->sock, SIOCSIFFLAGS, &(dev->ifdev)) == -1) {
         perror("Setting flags");
         return -1;
