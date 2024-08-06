@@ -1,14 +1,20 @@
 # Replacing MAC address with random values
 
-To use this program:
+To use this program (replace `wlan0` with the appropiate device name):
 
 ```bash
 make
 sudo ./macrandchg wlan0
 ```
 
-This program is equivalent to this sequence of commands (using wlan0 as an
-example):
+A possible output is:
+
+```
+Current MAC address: 68:8D:BA:F6:51:57
+MAC address was succesfully changed to: B4:A0:13:58:E8:F3
+```
+
+This program is equivalent to this sequence of commands using `macchanger` tool:
 
 ```bash
 sudo ip link set wlan0 down
