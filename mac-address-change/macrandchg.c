@@ -79,7 +79,7 @@ int netdev_randomize_mac(struct netdev *dev) {
     // Overwriting the mac address with random numbers
     srand(time(NULL));
     for (int i = 0; i < 6; i++) {
-        dev->ifdev.ifr_hwaddr.sa_data[i] = (random() % 0xff) & (i == 0 ? 0xFC : 0xFF);
+        dev->ifdev.ifr_hwaddr.sa_data[i] = (rand() % 0xff) & (i == 0 ? 0xFC : 0xFF);
     }
     if (ioctl(dev->sock, SIOCSIFHWADDR, &(dev->ifdev)) == -1) {
         perror("Changing mac address");
