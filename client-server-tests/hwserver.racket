@@ -1,0 +1,10 @@
+#lang racket
+(require net/zmq)
+(define ctxt (context 1))
+(define sock (socket ctxt 'REP))
+(socke-bind! sock "tcp://*:5555")
+(let loop ()
+        (define message (socket-recv! sock))
+        (socket-send! sock message)
+        (loop))
+(context-close! ctxt)
