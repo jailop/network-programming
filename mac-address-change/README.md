@@ -1,4 +1,11 @@
-# Replacing MAC address
+# Replacing MAC address with random values
+
+To use this program:
+
+```bash
+make
+sudo ./macrandchg wlan0
+```
 
 This program is equivalent to this sequence of commands (using wlan0 as an
 example):

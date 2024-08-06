@@ -1,4 +1,7 @@
 CFLAGS = -Wall -g
 
-all: mac-address-change
+all: macrandchg
+
+clean:
+	rm -f macrandchg
 

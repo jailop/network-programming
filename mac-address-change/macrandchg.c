@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <linux/if_arp.h>
+#include <time.h>
 
 struct netdev {
     struct ifreq ifdev;
@@ -76,8 +77,9 @@ int netdev_randomize_mac(struct netdev *dev) {
     printf("Current MAC address: ");
     print_mac(dev->ifdev.ifr_hwaddr.sa_data);
     // Overwriting the mac address with random numbers
+    srand(time(NULL));
     for (int i = 0; i < 6; i++) {
-        dev->ifdev.ifr_hwaddr.sa_data[i] = rand() % 0xff;
+        dev->ifdev.ifr_hwaddr.sa_data[i] = (random() % 0xff) & (i == 0 ? 0xFC : 0xFF);
     }
     if (ioctl(dev->sock, SIOCSIFHWADDR, &(dev->ifdev)) == -1) {
         perror("Changing mac address");
