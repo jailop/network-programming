@@ -49,11 +49,13 @@ void* send_requests(void* arg) {
         close(sockfd);
         pthread_exit(NULL);
     }
+    /*
     if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) < 0) {
         perror("fcntl(F_SETFL) failed");
         close(sockfd);
         pthread_exit(NULL);
     }
+    */
 
     fd_set read_fds, write_fds;
     struct timeval timeout;
