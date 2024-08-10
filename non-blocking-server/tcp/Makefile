@@ -1,6 +1,9 @@
-CFLAGS = -Wall -g -std=c99
+CFLAGS = -Wall -g -std=c11 
+BINS = client blocking_server threading_server epolling_server epolling_threading_server epolling_fork_server
 
-all: server client server_alt
+.PHONY: clean all
+
+all: $(BINS)
 
 clean:
-	rm -f server client
+	rm -f $(BINS)

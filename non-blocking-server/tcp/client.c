@@ -6,12 +6,13 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-#define SERVER_PORT 8080
+#define SERVER_PORT 9999
 #define SERVER_ADDR "192.168.1.175"
 #define BUFFER_SIZE 1024
-#define THREAD_COUNT 10
+#define THREAD_COUNT 12
 
 volatile unsigned long response_count = 0;
+volatile unsigned long request_count = 0;
 pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void* send_requests(void* arg) {
@@ -39,6 +40,9 @@ void* send_requests(void* arg) {
     }
     while (1) {
         send(sockfd, buffer, sizeof(buffer), 0);
+        pthread_mutex_lock(&count_mutex);
+        request_count++;
+        pthread_mutex_unlock(&count_mutex);
         n = recv(sockfd, buffer, BUFFER_SIZE, 0);
         if (n < 0) {
             perror("recv failed");
@@ -58,7 +62,8 @@ void* report_responses(void* arg) {
     while (1) {
         sleep(1);
         pthread_mutex_lock(&count_mutex);
-        printf("Responses received: %lu\n", response_count);
+        printf("sent %lu  recv %lu\n", request_count, response_count);
+        request_count = 0;
         response_count = 0;
         pthread_mutex_unlock(&count_mutex);
     }
