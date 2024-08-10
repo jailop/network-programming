@@ -9,7 +9,7 @@
 #define SERVER_PORT 9999
 #define SERVER_ADDR "192.168.1.175"
 #define BUFFER_SIZE 1024
-#define THREAD_COUNT 12
+#define THREAD_COUNT 4
 
 volatile unsigned long response_count = 0;
 volatile unsigned long request_count = 0;
@@ -20,41 +20,46 @@ void* send_requests(void* arg) {
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
     ssize_t n;
-    memset(buffer, '0', sizeof(buffer));
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("socket creation failed");
-        pthread_exit(NULL);
-    }
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
-    if (inet_pton(AF_INET, SERVER_ADDR, &server_addr.sin_addr) <= 0) {
-        perror("Invalid address/Address not supported");
-        close(sockfd);
-        pthread_exit(NULL);
-    }
-    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connection failed");
-        close(sockfd);
-        pthread_exit(NULL);
-    }
     while (1) {
-        send(sockfd, buffer, sizeof(buffer), 0);
-        pthread_mutex_lock(&count_mutex);
-        request_count++;
-        pthread_mutex_unlock(&count_mutex);
-        n = recv(sockfd, buffer, BUFFER_SIZE, 0);
-        if (n < 0) {
-            perror("recv failed");
-        } else if (n == 0) {
-            break;
-        } else {
-            pthread_mutex_lock(&count_mutex);
-            response_count++;
-            pthread_mutex_unlock(&count_mutex);
+        memset(buffer, '0', sizeof(buffer));
+        if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+            perror("socket creation failed");
+            pthread_exit(NULL);
         }
+        memset(&server_addr, 0, sizeof(server_addr));
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_port = htons(SERVER_PORT);
+        if (inet_pton(AF_INET, SERVER_ADDR, &server_addr.sin_addr) <= 0) {
+            perror("Invalid address/Address not supported");
+            close(sockfd);
+            pthread_exit(NULL);
+        }
+        if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+            perror("Connection failed");
+            close(sockfd);
+            // pthread_exit(NULL);
+            sleep(1);
+            continue;
+        }
+        while (1) {
+            send(sockfd, buffer, sizeof(buffer), 0);
+            pthread_mutex_lock(&count_mutex);
+            request_count++;
+            pthread_mutex_unlock(&count_mutex);
+            n = recv(sockfd, buffer, BUFFER_SIZE, 0);
+            if (n < 0) {
+                perror("recv failed");
+                break;
+            } else if (n == 0) {
+                break;
+            } else {
+                pthread_mutex_lock(&count_mutex);
+                response_count++;
+                pthread_mutex_unlock(&count_mutex);
+            }
+        }
+        close(sockfd);
     }
-    close(sockfd);
     pthread_exit(NULL);
 }
 

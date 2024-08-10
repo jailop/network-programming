@@ -40,25 +40,25 @@ void set_server_address(struct sockaddr_in *srvaddr) {
 }
 
 void* process_request(void *arg) {
-        int cltsock = *(int *) arg;
-        // Receiving data
-        char buffer[BUFSIZE];
-        ssize_t n_recv;
-        while ((n_recv = recv(cltsock, buffer, BUFSIZE, 0)) > 0) {
-            atomic_request_count++;
-            // Echoing data
-            ssize_t n_send = send(cltsock, buffer, BUFSIZE, 0);
-            if (n_send == -1) {
-                perror("send");
-                break;
-            }
-            atomic_response_count++;
+    int cltsock = *(int *) arg;
+    // Receiving data
+    char buffer[BUFSIZE];
+    ssize_t n_recv;
+    while ((n_recv = recv(cltsock, buffer, BUFSIZE, 0)) > 0) {
+        atomic_request_count++;
+        // Echoing data
+        ssize_t n_send = send(cltsock, buffer, BUFSIZE, 0);
+        if (n_send == -1) {
+            perror("send");
+            break;
         }
-        if (n_recv == -1) {
-            perror("recv");
-        }
-        close(cltsock);
-        pthread_exit(NULL);
+        atomic_response_count++;
+    }
+    if (n_recv == -1) {
+        perror("recv");
+    }
+    close(cltsock);
+    pthread_exit(NULL);
 }
 
 void serve(int srvsock) {

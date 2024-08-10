@@ -17,7 +17,7 @@
 #define SRVADDR "0.0.0.0"
 #define BUFSIZE 1024
 #define MAXEVENTS 32
-#define NUMWORKERS 6
+#define NUMWORKERS 4
 
 struct worker_info {
     int epfd;
