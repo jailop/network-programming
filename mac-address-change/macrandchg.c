@@ -98,20 +98,7 @@ int netdev_down(struct netdev *dev) {
     dev->ifdev.ifr_flags &= ~IFF_UP;
     if (ioctl(dev->sock, SIOCSIFFLAGS, &(dev->ifdev)) == -1) {
         perror("Setting flags");
-        return -1int main(int paramc, char *paramv[]) {
-    if (paramc < 2)  {
-        printf("Usage: %s IFNAME\n", paramv[0]);
-        return EXIT_FAILURE;
-    }
-    struct netdev dev;
-    int ret = 0;
-    ret |= netdev_init(&dev, paramv[1]);
-    ret |= netdev_down(&dev);
-    ret |= netdev_randomize_mac(&dev);
-    ret |= netdev_up(&dev);
-    ret |= netdev_deinit(&dev);
-    return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
-};
+        return -1;
     }
     return 0;
 }
